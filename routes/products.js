@@ -48,7 +48,19 @@ router.put('/:id', (req, res, next) => {
 		}
 		res.sendStatus(200);
 	}, err => {
-		next(err);
+		if (req.body.category_id) {
+			models.category.findById(req.body.category_id).then(
+				category => {
+					if (!category) {
+						let err = new Error("Category with id '" + req.body.category_id + "' doesn't exist");
+						err.status = 404;
+						next(err);
+					}
+				}
+			)
+		} else {
+			next(err);
+		}
 	})
 });
 
